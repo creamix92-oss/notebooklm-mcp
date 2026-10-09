@@ -1,4 +1,5 @@
 # Campaña gratuita y automatizada: Byrabit-B, el conejo bendecido + Grupo Taquitos
+> **SUSTITUIDO** por `brief_promocion_musical.md` y `calendario_4_semanas.md` (09-oct-2026). Mis suposiciones de este archivo sobre quiénes son Byrabit-B y Grupo Taquitos eran erróneas, y la parte de contactar a terceros contradice el brief (no enviar mensajes a terceros). Se conserva solo como referencia.
 
 > Suposiciones (corrígelas si no son así; no encontré información de ellos): Byrabit-B es un personaje/mascota de tono positivo y de fe; Grupo Taquitos es el grupo/colectivo detrás (música, animación o comunidad). Público principal: hispanohablantes, con puente hacia el canal de oraciones y alabanzas.
 
