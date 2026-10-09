@@ -2,6 +2,24 @@
   "_ayuda": "Cada elemento solo se ejecuta si aprobado=true y cuando<=ahora (UTC). acciones: set_description | upload_short. Vacía por defecto: nada se publica sin que tú lo apruebes aquí.",
   "elementos": [
     {
+      "id": "s1-byrabit-descripcion",
+      "artista": "byrabit",
+      "accion": "set_description",
+      "cuando": "2026-10-12T23:00:00Z",
+      "aprobado": true,
+      "video_id": "wpj1TnSYGas",
+      "texto": "Escucha la canción completa y cuéntame en los comentarios qué te transmite."
+    },
+    {
+      "id": "s1-taquitos-descripcion",
+      "artista": "taquitos",
+      "accion": "set_description",
+      "cuando": "2026-10-12T23:00:00Z",
+      "aprobado": true,
+      "video_id": "Q3bCw89qx0E",
+      "texto": "Escucha la canción completa y descubre cuál es tu favorita de Grupo Taquitos."
+    },
+    {
       "id": "ejemplo-byrabit-desc-1",
       "artista": "byrabit",
       "accion": "set_description",
