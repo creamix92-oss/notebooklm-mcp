@@ -1,0 +1,25 @@
+{
+  "_ayuda": "Cada elemento solo se ejecuta si aprobado=true y cuando<=ahora (UTC). acciones: set_description | upload_short. Vacía por defecto: nada se publica sin que tú lo apruebes aquí.",
+  "elementos": [
+    {
+      "id": "ejemplo-byrabit-desc-1",
+      "artista": "byrabit",
+      "accion": "set_description",
+      "cuando": "2099-01-01T23:00:00Z",
+      "aprobado": false,
+      "video_id": "wpj1TnSYGas",
+      "texto": "Escucha la canción completa y cuéntame en los comentarios qué te transmite."
+    },
+    {
+      "id": "ejemplo-short-1",
+      "artista": "taquitos",
+      "accion": "upload_short",
+      "cuando": "2099-01-01T23:00:00Z",
+      "aprobado": false,
+      "derechos_confirmados": false,
+      "archivo": "clips/ejemplo.mp4",
+      "titulo": "No Es Ahí (fragmento) #Shorts",
+      "descripcion": "Escucha la canción completa: https://www.youtube.com/watch?v=Q3bCw89qx0E"
+    }
+  ]
+}
