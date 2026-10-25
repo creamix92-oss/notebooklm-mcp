@@ -1,0 +1,99 @@
+Es jueves por la noche. Jerusalén huele a pan sin levadura y a cordero asado. Jesús acaba de cenar con sus discípulos. Sabe lo que viene. Y entonces, el Evangelio de Mateo dice una frase que casi nadie se detiene a leer: "Y después de cantar el himno, salieron al monte de los Olivos."
+
+Cantaron. La noche antes de la cruz, cantaron.
+
+Ahora viene lo curioso. Los Evangelios no dicen qué himno era. No dan el título. No dan la letra. Solo dicen "el himno", como quien dice "puso música" sin decir cuál.
+
+Así que hoy vamos a investigar. Sin inventar nada. Solo con pistas reales: la Biblia, la fiesta de la Pascua y la tradición judía. Al final sabrás qué cantó, muy probablemente, Jesús esa noche. Y hay un giro final que cambia la forma de rezar. Quédate hasta el último minuto.
+
+Empezamos.
+
+Uno. La pista del calendario.
+
+Aquella cena no era una cena cualquiera. Era la cena de la Pascua, la fiesta judía que recuerda la salida de Egipto. Los tres primeros Evangelios lo cuentan así [VERIFICAR]. Y la Pascua no se celebraba en silencio.
+
+Dato curioso: en la Pascua judía había una parte cantada. Se llamaba el Hallel. La palabra viene de "aleluya", que significa algo así como "alaben al Señor". Es decir, el Hallel era un paquete de salmos de alabanza para cantar en las grandes fiestas.
+
+Y el Hallel de la Pascua incluía seis salmos seguidos: del 113 al 118 [VERIFICAR].
+
+Mini-conclusión: si fue una cena de Pascua, lo normal era cantar. Y lo normal era cantar esos seis salmos. No es una teoría rara. Es la pista más sólida que tenemos.
+
+Dos. La pista del salmo del éxodo.
+
+Vamos a abrir ese paquete de seis salmos. El primero que nos interesa es el 114. Empieza así: "Cuando salió Israel de Egipto, la casa de Jacob de un pueblo extraño". Es un salmo corto, y está lleno de imágenes. El mar que huye. El Jordán que se echa atrás. Los montes que saltan como carneros [VERIFICAR].
+
+Sí, montes saltando como carneros. La Biblia también sabe hacer poesía con humor.
+
+Ahora imagina la escena. Jesús y sus discípulos en una mesa, en plena fiesta que recuerda cómo Dios los sacó de la esclavitud. Cantan sobre el mar abierto. Y el que dirige la mesa sabe que esa misma noche empieza su propio camino hacia la cruz.
+
+Mini-conclusión: el salmo no era un adorno. Era el mensaje de la fiesta. Dios libera. Y Jesús lo cantaba sabiendo cómo iba a cumplirse.
+
+Tres. La pista del salmo más corto.
+
+Dentro del Hallel hay un salmo que merece un aplauso. El salmo 117. Tiene dos versículos. Solo dos. Es el capítulo más corto de toda la Biblia [VERIFICAR].
+
+Dice, más o menos: "Alabad al Señor, naciones todas; pueblos todos, alabadle. Porque ha engrandecido su misericordia sobre nosotros, y la fidelidad del Señor es para siempre."
+
+Y ya está. Se acabó. Quien dice que no tiene tiempo para rezar, que lea esto en voz alta. Dura menos que calentar el café.
+
+Pero ojo con lo que dice. Habla de "naciones todas". Hace dos mil años, en una mesa pequeña de Jerusalén, se cantaba una alabanza que ya hablaba de todos los pueblos. Incluido el tuyo.
+
+Mini-conclusión: la oración no necesita ser larga para ser enorme. Dos versículos bastaron para caber en la noche más pesada de la historia.
+
+Cuatro. La pista de la muerte.
+
+Ahora el salmo 116. Este es más duro. Dice: "Me rodearon lazos de muerte, me encontraron angustias del sepulcro." Y unas líneas después: "Preciosa es a los ojos del Señor la muerte de sus santos [VERIFICAR]."
+
+Léelo despacio. Es un salmo de alguien que ha pasado miedo de verdad y que, aun así, da gracias. Dice también: "Alzaré la copa de la salvación e invocaré el nombre del Señor."
+
+Una copa. En una cena. Con el miedo a la muerte y la gratitud en la misma frase.
+
+Mira qué casualidad, o mejor dicho, qué no-casualidad. Si esa noche se cantó el Hallel, Jesús y los suyos pronunciaron estas palabras justo antes de salir hacia el huerto. No hace falta forzar nada. Las palabras estaban ahí, en el repertorio de la fiesta.
+
+Mini-conclusión: se puede rezar con miedo. Se puede cantar con el corazón apretado. El salmo 116 es la prueba.
+
+Cinco. La pista que ya habías escuchado.
+
+Y llegamos al último salmo del Hallel, el 118. Este tiene una historia propia, y es la más interesante.
+
+Primera pista. El salmo 118 dice: "La piedra que desecharon los constructores ha venido a ser la piedra angular." Jesús ya había citado esa frase unos días antes, en el templo, hablando de sí mismo. Está en el Evangelio de Mateo, capítulo 21 [VERIFICAR].
+
+Segunda pista. En el mismo salmo aparece la palabra "Hosanna", que viene de un grito hebreo que significa "sálvanos, te lo pedimos" [VERIFICAR]. Y es exactamente lo que gritaba la gente cuando Jesús entró en Jerusalén, días antes de aquella cena. Con ramas en la mano. Con entusiasmo.
+
+Es decir, la multitud gritó palabras de este salmo en la entrada. Jesús las citó en el templo. Y ahora, en la cena, las cantaba otra vez con los suyos.
+
+Pregunta incómoda: ¿cuántos de los que gritaron "Hosanna" siguieron ahí aquella noche? Ninguna respuesta bonita. Pero el salmo seguía sonando igual.
+
+Mini-conclusión: el salmo 118 es el hilo que une la entrada, el templo y la cena. Si buscas una sola pista fuerte, es esta.
+
+Seis. La pista de lo que no se canta.
+
+Queda un detalle, y es el que más me gusta. Los Evangelios dicen "el himno". No dicen que fuera triste. No dicen que fuera solemne. No dicen que alguien llorara. Dicen que cantaron.
+
+Y cantar, en esa mesa, era un acto de confianza. Porque no se canta una alabanza por lo que ya se tiene en la mano. Se canta por lo que se espera.
+
+Según el Evangelio de Juan, Judas ya se había marchado antes [VERIFICAR]. Así que el himno lo cantó un grupo más pequeño. Cansado. Con sueño. Con miedo, probablemente. Desafinados, seguramente. Y aun así, cantaron.
+
+Mini-conclusión: la fe no siempre suena bonita. A veces suena como un grupo de personas agotadas cantando algo que se saben de memoria.
+
+Y ahora, el giro.
+
+Hemos revisado varios salmos y seguimos con una duda. ¿Cómo termina el Hallel? ¿Cuál es la última frase del himno que probablemente cantaron antes de salir hacia el monte de los Olivos?
+
+Las últimas palabras del salmo 118, y por tanto del Hallel, son estas: "Dad gracias al Señor, porque es bueno; porque para siempre es su misericordia [VERIFICAR]."
+
+Gracias. Eso. La última frase del himno es una frase de gratitud.
+
+Piénsalo un momento. Antes de la cruz, antes del huerto, antes de la traición, la última palabra que cantaron fue "gracias". No "líbranos". No "por qué". Gracias.
+
+Y aquí está el giro que prometí. Mucha gente reza empezando por lo que le falta. Y está bien, Dios escucha todo. Pero esta noche nos enseña otra cosa: se puede rezar terminando por lo que se agradece. No porque todo vaya bien. Sino porque Dios sigue siendo bueno aunque las cosas no vayan bien.
+
+Esta noche, si quieres, haz el ejercicio más corto del mundo. Lee el salmo 117 en voz alta. Son dos versículos, treinta segundos. Y termina con una frase tuya, sencilla, que empiece por "gracias". Nada más.
+
+Si hoy no tienes fuerzas para una oración larga, no la necesitas. Jesús, la noche más difícil de su vida, cantó un himno. Y su última palabra fue gratitud.
+
+Antes de irme, una advertencia honesta: no sabemos con certeza qué salmos cantó. La Biblia solo dice "el himno". Lo que hemos visto son pistas muy razonables, no una prueba definitiva. Pero las pistas apuntan en una dirección muy clara.
+
+Ahora te toca a ti. Si tuvieras que cantar un solo versículo la noche antes de la prueba más grande de tu vida, ¿cuál sería? Escríbelo en los comentarios. Seguro que alguien más lo necesita hoy.
+
+Y si este vídeo te ha hecho bien, suscríbete y comparte con alguien que hoy necesite una oración corta. Hasta la próxima.

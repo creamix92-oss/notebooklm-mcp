@@ -1,0 +1,26 @@
+{
+  "zona_horaria_nota": "Las fechas de cola.json van en UTC. 19:00 America/Santo_Domingo = 23:00 UTC.",
+  "artistas": {
+    "byrabit": {
+      "nombre": "ByRabit-B El Conejo Bendecido",
+      "channel_id": "UCjzieK38GAFid-LW7dzHQJQ",
+      "admin_verificada": true,
+      "secretos_env": ["YT_BYRABIT_CLIENT_ID", "YT_BYRABIT_CLIENT_SECRET", "YT_BYRABIT_REFRESH_TOKEN"],
+      "videos": {
+        "wpj1TnSYGas": "cancion_completa",
+        "mVeZsLV1erA": "short"
+      }
+    },
+    "taquitos": {
+      "nombre": "Grupo Taquitos Oficial",
+      "channel_id": "UCFHmbldRN8OBpMUrcw3kvWA",
+      "admin_verificada": false,
+      "secretos_env": ["YT_TAQUITOS_CLIENT_ID", "YT_TAQUITOS_CLIENT_SECRET", "YT_TAQUITOS_REFRESH_TOKEN"],
+      "videos": {
+        "Q3bCw89qx0E": "cancion_completa",
+        "lVjbqMq-OkU": "cancion_completa",
+        "twvZDHS5utE": "short"
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+name: campana-musical
+on:
+  schedule:
+    - cron: "17 * * * *"      # cada hora; solo actúa si hay elementos aprobados y vencidos
+    - cron: "43 12 * * 1"     # informe semanal (lunes)
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: campana-musical
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    env:
+      CAMPANA_LIVE: ${{ vars.CAMPANA_LIVE == 'true' && '1' || '0' }}
+      YT_BYRABIT_CLIENT_ID: ${{ secrets.YT_BYRABIT_CLIENT_ID }}
+      YT_BYRABIT_CLIENT_SECRET: ${{ secrets.YT_BYRABIT_CLIENT_SECRET }}
+      YT_BYRABIT_REFRESH_TOKEN: ${{ secrets.YT_BYRABIT_REFRESH_TOKEN }}
+      YT_TAQUITOS_CLIENT_ID: ${{ secrets.YT_TAQUITOS_CLIENT_ID }}
+      YT_TAQUITOS_CLIENT_SECRET: ${{ secrets.YT_TAQUITOS_CLIENT_SECRET }}
+      YT_TAQUITOS_REFRESH_TOKEN: ${{ secrets.YT_TAQUITOS_REFRESH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Pruebas
+        working-directory: Mi-Canal/campanas/automatizacion
+        run: PYTHONPATH=. python -m unittest -q test_yt_campaign
+      - name: Publicar elementos aprobados
+        working-directory: Mi-Canal/campanas/automatizacion
+        run: python yt_campaign.py publish
+      - name: Informe semanal
+        if: github.event.schedule == '43 12 * * 1'
+        working-directory: Mi-Canal/campanas/automatizacion
+        run: python yt_campaign.py report --days 7
+      - name: Guardar estado
+        run: |
+          git config user.name "campana-bot"; git config user.email "campana-bot@users.noreply.github.com"
+          git add Mi-Canal/campanas/automatizacion/estado.json Mi-Canal/campanas/automatizacion/metricas.csv Mi-Canal/campanas/automatizacion/informe_ultimo.md 2>/dev/null || true
+          git diff --cached --quiet || (git commit -m "campana: estado y metricas [skip ci]" && git push)
