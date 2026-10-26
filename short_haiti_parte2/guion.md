@@ -8,7 +8,7 @@ Vídeo final: `haiti_parte2.mp4`. El texto exacto de cada escena está en `escen
 1. ¿Sabías que hubo un país llamado Haití Español… y que duró apenas unas semanas?
 2. Esta es la historia de cómo Haití llegó a gobernar toda la isla… y de cómo los dominicanos lo recuperaron todo.
 3. **1801.** Haití ni siquiera existe todavía. Pero Toussaint Louverture, que manda en la colonia francesa del oeste, cruza la isla… y toma Santo Domingo.
-4. **1802.** Dato curioso: luchaba contra la esclavitud… pero en el este no llegó a abolirla. Y en 1802, una expedición francesa le obliga a volver al oeste.
+4. **1802.** Las fuentes discrepan sobre si abolió la esclavitud en el este. Y en 1802, una expedición francesa le obliga a volver al oeste.
 5. **1805.** Haití ya es independiente. Dessalines sitia Santo Domingo… y fracasa.
 6. **1821.** José Núñez de Cáceres declara la independencia de España. Nace un país nuevo: el Estado Independiente del Haití Español.
 7. Pero los pueblos de la frontera, como Montecristi y Dajabón, no lo siguen. Piden unirse… ¡a Haití!

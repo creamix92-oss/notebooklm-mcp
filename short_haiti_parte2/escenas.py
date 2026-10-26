@@ -23,7 +23,7 @@ SCENES = [
     dict(voz="Mil ochocientos uno. Haití ni siquiera existe todavía. Pero Toussaint Louverture, que manda en la colonia francesa del oeste, cruza la isla… y toma Santo Domingo.",
          titulo="1801", sub="Toussaint Louverture toma Santo Domingo", oeste=FRA, este=ESP, cam=ISLA,
          marcas=[(*SDQ, "Santo Domingo")], flecha=(PAP, SDQ)),
-    dict(voz="Dato curioso: luchaba contra la esclavitud… pero en el este no llegó a abolirla. Y en mil ochocientos dos, una expedición francesa le obliga a volver al oeste.",
+    dict(voz="Las fuentes discrepan sobre si abolió la esclavitud en el este. Y en mil ochocientos dos, una expedición francesa le obliga a volver al oeste.",
          titulo="1802", sub="Toussaint se retira al oeste", oeste=FRA, este=ESP, cam=ISLA,
          marcas=[(*SDQ, "Santo Domingo")], flecha=(SDQ, PAP)),
     dict(voz="Mil ochocientos cinco. Haití ya es independiente. Dessalines sitia Santo Domingo… y fracasa.",
