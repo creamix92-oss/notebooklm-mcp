@@ -84,7 +84,7 @@ def region_text(lon, lat):
     return ax.text(x, y, "", fontsize=38, color="white", weight="bold", ha="center", va="center", zorder=10,
                    linespacing=1.1, path_effects=stroke(6))
 
-lbl_w, lbl_e, lbl_all = region_text(-72.75, 19.05), region_text(-70.4, 19.2), region_text(-70.6, 19.0)
+lbl_w, lbl_e, lbl_all = region_text(-72.75, 19.05), region_text(-70.5, 19.4), region_text(-70.6, 19.0)
 
 # Marcadores: se crean todos y se muestran los de la escena
 marker_art = {}
@@ -127,7 +127,9 @@ def draw(st):
     west.set_facecolor(sc["oeste"]); east.set_facecolor(sc["este"])
     same = sc["oeste"] == sc["este"]
     border.set_visible(not same)
-    big = sc["cam"][2] >= 5
+    big = sc["cam"][2] >= 5 or "etiquetas" in sc
+    (wl, wb), (el, eb) = sc.get("etiquetas", [(-72.75, 19.05), (-70.5, 19.4)])
+    lbl_w.set_position(xy(wl, wb)); lbl_e.set_position(xy(el, eb))
     lbl_all.set_text(NOMBRES[sc["oeste"]] if same else ""); lbl_all.set_visible(big and same)
     lbl_w.set_text(NOMBRES[sc["oeste"]]); lbl_w.set_visible(big and not same)
     lbl_e.set_text(NOMBRES[sc["este"]]); lbl_e.set_visible(big and not same)

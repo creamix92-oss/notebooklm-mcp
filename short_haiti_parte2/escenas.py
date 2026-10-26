@@ -68,5 +68,6 @@ SCENES = [
     dict(voz="Doce años de guerra después de la independencia… y Haití nunca recuperó el este.",
          titulo="12 años de guerra", sub="Y la independencia se mantiene", oeste=HTI, este=DOM, cam=ISLA),
     dict(voz="Una isla. Dos países. Y una historia mucho más complicada… de lo que te contaron.",
-         titulo="Una isla, dos países", sub="Sígueme para la parte 3", oeste=HTI, este=DOM, cam=(-71.7, 19.0, 3.0)),
+         titulo="Una isla, dos países", sub="Sígueme para la parte 3", oeste=HTI, este=DOM, cam=(-71.7, 19.0, 3.0),
+         etiquetas=[(-72.45, 19.25), (-70.95, 18.8)]),
 ]
