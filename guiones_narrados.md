@@ -61,3 +61,16 @@ Encaja con los mapas de `short_bolivia_mapas/`.
 ---
 
 Las fuentes de cada dato están en `short_gibraltar/guion.md` y en la conversación del short de Bolivia.
+
+## Versión usada en las voces generadas (`voces/`)
+
+Para que cada frase quepa en su escena, la voz sintética usa versiones más cortas de cuatro frases:
+
+- Gibraltar, 40–46 s: «En 1967, y en 2002, Gibraltar votó seguir siendo británico.»
+- Gibraltar, 46–52 s: «En 1969, España cerró la frontera… hasta el ochenta y cinco.»
+- Gibraltar, 52–60 s: «En julio de 2026, un acuerdo con Europa quitó la verja. Gibraltar sigue siendo británico… pero ya sin verja.»
+- Bolivia, 54–60 s: «En 2018, La Haya falló a favor de Chile. El mar sigue al otro lado.»
+
+En Bolivia, «a casi cuatro mil metros» se cambió por «en lo alto de los Andes», porque esa cifra no está confirmada en las fuentes.
+
+Voces: Kokoro 82M (Apache 2.0), voces en español `em_alex` (hombre) y `ef_dora` (mujer). Se generan con `voces/narrar.py`.
