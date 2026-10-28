@@ -1,0 +1,542 @@
+<meta charset="utf-8">
+<title>Estudio de Frases Virales</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@500;700;800&display=swap">
+<style>
+:root { --bg:#f4f5f7; --panel:#ffffff; --fg:#14171c; --muted:#5d6672; --line:#dde1e7; --accent:#1459d9; --accent-fg:#ffffff; --chip:#eaeef5; color-scheme: light }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#0e1116; --panel:#171b22; --fg:#eef1f5; --muted:#9aa4b2; --line:#2a313b; --accent:#5b8dff; --accent-fg:#0b1020; --chip:#222834; color-scheme: dark } }
+:root[data-theme="dark"] { --bg:#0e1116; --panel:#171b22; --fg:#eef1f5; --muted:#9aa4b2; --line:#2a313b; --accent:#5b8dff; --accent-fg:#0b1020; --chip:#222834; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font: 15px/1.45 Montserrat, system-ui, sans-serif; padding-block: 24px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+.wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 20px }
+h1 { font: 400 clamp(1.8rem, 5vw, 2.6rem)/1.05 Anton, Impact, sans-serif; margin: 0; letter-spacing: .01em; text-wrap: balance }
+.sub { color: var(--muted); margin: 6px 0 0; max-width: 62ch }
+.app { display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: 20px; align-items: start }
+@media (max-width: 860px) { .app { grid-template-columns: minmax(0, 1fr) } }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 14px; min-width: 0 }
+h2 { font-size: .78rem; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); margin: 0 }
+.chips { display: flex; flex-wrap: wrap; gap: 8px }
+.chip { font: 700 .85rem Montserrat, sans-serif; padding: 8px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--chip); color: var(--fg); cursor: pointer }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); border-color: var(--accent) }
+.chip:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px }
+.hint { color: var(--muted); font-size: .85rem; margin: 0 }
+label { display: grid; gap: 5px; font-weight: 700; font-size: .85rem; min-width: 0 }
+input, textarea, select { font: 500 .95rem Montserrat, sans-serif; padding: 9px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--fg); width: 100%; min-width: 0 }
+textarea { resize: vertical; min-height: 78px }
+.row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px }
+.swatches { display: flex; flex-wrap: wrap; gap: 8px }
+.sw { width: 38px; height: 38px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; padding: 0 }
+.sw[aria-pressed="true"] { border-color: var(--fg) }
+.btns { display: flex; flex-wrap: wrap; gap: 8px }
+button.main, button.alt { font: 800 .9rem Montserrat, sans-serif; padding: 11px 16px; border-radius: 10px; border: 1px solid var(--accent); cursor: pointer }
+button.main { background: var(--accent); color: var(--accent-fg) }
+button.alt { background: transparent; color: var(--fg); border-color: var(--line) }
+.stage { display: grid; gap: 14px; justify-items: center; min-width: 0 }
+canvas { width: 100%; max-width: 560px; height: auto; border-radius: 10px; border: 1px solid var(--line); background: #222 }
+.out { width: 100%; display: grid; gap: 8px; justify-items: center }
+.out img { max-width: 360px; width: 100%; border-radius: 8px; border: 1px solid var(--line) }
+.cap { width: 100%; display: grid; gap: 6px }
+.tips { margin: 0; padding-left: 1.1em; color: var(--muted); font-size: .88rem; display: grid; gap: 4px }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Estudio de Frases Virales</h1>
+    <p class="sub">Elige un formato que genera comentarios y compartidos en Facebook, cambia la frase y descarga la imagen en PNG lista para publicar.</p>
+  </header>
+  <div class="app">
+    <section class="card" aria-label="Controles">
+      <h2>1 · Formato</h2>
+      <div class="chips" id="formats"></div>
+      <p class="hint" id="fmtHint"></p>
+      <h2>2 · Texto</h2>
+      <label>Etiqueta superior<input id="tag" maxlength="40"></label>
+      <label><span id="lblTexto">Frase principal</span><textarea id="texto"></textarea></label>
+      <label><span id="lblExtra">Opciones</span><textarea id="extra"></textarea></label>
+      <p class="hint">Rodea una palabra con *asteriscos* para resaltarla.</p>
+      <div class="row">
+        <label>Llamada a la acción<input id="cta" maxlength="60"></label>
+        <label>Tu página o usuario<input id="handle" maxlength="30" placeholder="@tupagina"></label>
+      </div>
+      <h2>3 · Estilo</h2>
+      <div class="swatches" id="themes" role="group" aria-label="Colores"></div>
+      <div class="row">
+        <label>Tamaño
+          <select id="size">
+            <option value="1080x1350">Vertical 4:5 (1080×1350)</option>
+            <option value="1080x1080">Cuadrado 1:1 (1080×1080)</option>
+          </select>
+        </label>
+        <label>Letra
+          <select id="font">
+            <option value="Anton">Impacto (Anton)</option>
+            <option value="Montserrat">Moderna (Montserrat)</option>
+          </select>
+        </label>
+      </div>
+      <div class="btns">
+        <button class="main" id="rand" type="button">Sorpréndeme con otra frase</button>
+        <button class="alt" id="dl" type="button">Descargar PNG</button>
+      </div>
+    </section>
+
+    <section class="stage" aria-label="Vista previa">
+      <canvas id="cv" width="1080" height="1350" role="img" aria-label="Vista previa de la imagen"></canvas>
+      <div class="card cap" style="width:100%;max-width:560px">
+        <h2>Texto sugerido para acompañar la publicación</h2>
+        <textarea id="caption" rows="3" readonly></textarea>
+        <div class="btns"><button class="alt" id="copy" type="button">Copiar texto</button></div>
+      </div>
+      <div class="out" id="out" hidden>
+        <h2>Tu imagen está lista</h2>
+        <img id="outImg" alt="Imagen generada">
+        <p class="hint">Si la descarga no empieza, mantén pulsada la imagen (o clic derecho) y elige guardar.</p>
+      </div>
+      <div class="card" style="width:100%;max-width:560px">
+        <h2>Qué hace viral una imagen de frase</h2>
+        <ul class="tips">
+          <li>Una sola idea por imagen y pocas palabras: se entiende en 2 segundos.</li>
+          <li>Pide una acción fácil: elegir A o B, completar una frase, etiquetar a alguien.</li>
+          <li>Habla de algo que la gente siente propio: familia, amistad, infancia, cansancio, paz.</li>
+          <li>El formato vertical 4:5 ocupa más pantalla en el móvil.</li>
+          <li>Prueba varios formatos y quédate con el que más comenta y comparte tu audiencia.</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var W = 1080, H = 1350;
+
+  var THEMES = [
+    { id: 'noche',  name: 'Noche y amarillo', bg1: '#0d0d0f', bg2: '#1b1b22', fg: '#ffffff', accent: '#ffd400', barText: '#111111', muted: '#b9b9c3' },
+    { id: 'azul',   name: 'Azul intenso',     bg1: '#1560e8', bg2: '#0a2f86', fg: '#ffffff', accent: '#ffe14d', barText: '#0a2060', muted: '#cfe0ff' },
+    { id: 'rojo',   name: 'Rojo fuerte',      bg1: '#e0243b', bg2: '#8f0f22', fg: '#ffffff', accent: '#ffffff', barText: '#b01227', muted: '#ffd3d9' },
+    { id: 'menta',  name: 'Verde oscuro',     bg1: '#0c2b27', bg2: '#06161a', fg: '#f3fffd', accent: '#5eead4', barText: '#06201d', muted: '#a7d9d1' },
+    { id: 'crema',  name: 'Papel claro',      bg1: '#f7f1e5', bg2: '#eadfc8', fg: '#1c1b1a', accent: '#e4572e', barText: '#ffffff', muted: '#6b6256' },
+    { id: 'rosa',   name: 'Rosa vivo',        bg1: '#ff4f8b', bg2: '#c2185b', fg: '#ffffff', accent: '#fff3a0', barText: '#7a0b3a', muted: '#ffd6e6' }
+  ];
+
+  var FORMATS = {
+    elige: {
+      name: 'Elige A o B', hint: 'Los dilemas de dos opciones piden una respuesta de una letra: comentar cuesta casi nada.',
+      lblTexto: 'Pregunta', lblExtra: 'Dos opciones (una por línea)',
+      cta: 'Comenta A o B', caption: 'Dime en los comentarios: ¿A o B? Yo quiero leerte.',
+      bank: [
+        ['¿Qué prefieres?', 'Dormir hasta tarde\nMadrugar y aprovechar el día', 'ELIGE UNO'],
+        ['¿Qué es peor?', 'Que te dejen en visto\nQue te contesten solo "ok"', 'SINCERO'],
+        ['¿Con qué te quedas?', 'Una vida tranquila\nUna vida de aventuras', 'ELIGE UNO'],
+        ['¿Qué te cuesta más?', 'Pedir perdón\nPerdonar', 'SINCERO'],
+        ['Si pudieras volver…', 'A la infancia\nA la adolescencia', 'NOSTALGIA'],
+        ['¿Cómo prefieres el café?', 'En la mañana\nEn la tarde', 'ELIGE UNO'],
+        ['¿Qué vale más?', 'Tiempo\nDinero', 'PIÉNSALO'],
+        ['¿Qué eliges hoy?', 'Un plan en casa\nUna salida con amigos', 'ELIGE UNO']
+      ]
+    },
+    completa: {
+      name: 'Completa la frase', hint: 'Una frase a medias invita a escribir la propia: todos tienen algo que decir.',
+      lblTexto: 'Frase (usa ____ para el hueco)', lblExtra: 'Nota pequeña (opcional)',
+      cta: 'Escríbelo en los comentarios', caption: 'Completa la frase en los comentarios. Quiero leer tu respuesta.',
+      bank: [
+        ['Lo que más extraño de mi infancia es ____', '', 'COMPLETA'],
+        ['Una canción que me cambia el día es ____', '', 'COMPLETA'],
+        ['Mi mejor consejo de vida: ____', '', 'COMPLETA'],
+        ['Si pudiera decirle algo a mi yo de hace 10 años: ____', '', 'COMPLETA'],
+        ['La persona que más me ha enseñado es ____', '', 'COMPLETA'],
+        ['Mi comida favorita de casa es ____', '', 'COMPLETA'],
+        ['Algo que ya no tolero: ____', '', 'COMPLETA'],
+        ['Un lugar al que quiero volver es ____', '', 'COMPLETA']
+      ]
+    },
+    reflexion: {
+      name: 'Reflexión', hint: 'Una verdad sencilla y emotiva que la gente quiere guardar y compartir.',
+      lblTexto: 'Frase', lblExtra: 'Firma (opcional)',
+      cta: 'Guárdala y compártela', caption: '¿Te sentiste identificado? Compártela con quien necesite leerla hoy.',
+      bank: [
+        ['No pierdas *un minuto* de tu paz por algo que dentro de un año no te va a importar.', 'Reflexión del día', 'PARA PENSAR'],
+        ['La vida es *demasiado corta* para desperdiciarla en cosas que no importan.', 'Reflexión del día', 'PARA PENSAR'],
+        ['No te preocupes por quien no te valora. *Valórate tú.*', '', 'RECUERDA'],
+        ['A veces *soltar* es la forma más valiente de quedarte contigo.', '', 'RECUERDA'],
+        ['Cuida a quienes te cuidan cuando *nadie* más lo hace.', '', 'DE CORAZÓN'],
+        ['Hoy no tienes que ser perfecto. Solo *ser constante.*', '', 'RECUERDA'],
+        ['El tiempo no se recupera. *Úsalo* con quien vale la pena.', '', 'DE CORAZÓN'],
+        ['Lo que hoy te duele, mañana será *tu fuerza.*', '', 'ÁNIMO']
+      ]
+    },
+    comparte: {
+      name: 'Comparte / Etiqueta', hint: 'Dedicar una frase a alguien es la razón número uno para compartir.',
+      lblTexto: 'Frase', lblExtra: 'Nota pequeña (opcional)',
+      cta: 'Comparte | Etiqueta a esa persona', caption: 'Etiqueta a esa persona que lo necesita leer hoy.',
+      bank: [
+        ['Dale las gracias hoy a quien *nunca te soltó la mano.*', '', 'DEDÍCALO'],
+        ['Si eres de los que *ayudan sin esperar nada*, esto es para ti.', '', 'PARA TI'],
+        ['Los amigos de verdad *no se cuentan*, se sienten.', '', 'AMISTAD'],
+        ['A quien madruga, trabaja y no se rinde: *todo llega.*', '', 'ÁNIMO'],
+        ['Etiqueta a esa persona que siempre *te hace reír.*', '', 'ETIQUETA'],
+        ['Comparte si crees que *la bondad* todavía existe.', '', 'BONDAD'],
+        ['Si leíste esto, *alguien* está pensando en ti hoy.', '', 'PARA TI'],
+        ['Hay personas que *llegan para quedarse* en el corazón.', '', 'DEDÍCALO']
+      ]
+    },
+    lista: {
+      name: 'Lista', hint: 'Las listas cortas se leen rápido y cada línea es una razón para decir "me pasa".',
+      lblTexto: 'Título', lblExtra: 'Puntos (uno por línea, hasta 5)',
+      cta: '¿Cuál te pasa a ti?', caption: '¿Con cuál te identificas? Cuéntame en los comentarios.',
+      bank: [
+        ['Señales de que *estás creciendo*', 'Ya no discutes por todo\nPrefieres paz a tener razón\nCuidas tu tiempo y tu energía\nSabes decir que no', 'SEÑALES'],
+        ['Cosas que *nadie te dice* de ser adulto', 'Casi nadie sabe lo que hace\nDescansar también es trabajar\nLos amigos se cuidan con tiempo\nEstá bien pedir ayuda', 'ADULTEZ'],
+        ['Si recuerdas esto, *viviste los buenos tiempos*', 'Jugar en la calle hasta que oscurecía\nEsperar tu canción en la radio\nLlamar a casa de un amigo\nTardes enteras sin celular', 'NOSTALGIA'],
+        ['Hábitos que *pueden cambiar tu vida*', 'Dormir bien\nCaminar 20 minutos\nAgradecer cada noche\nLeer 10 páginas al día', 'HÁBITOS'],
+        ['Lo que *de verdad* necesitas para ser feliz', 'Salud\nGente que te quiera\nUn plato de comida en casa\nPaz en la cabeza', 'REFLEXIÓN'],
+        ['Cosas que *se valen* hoy', 'Descansar\nPoner límites\nCambiar de opinión\nEmpezar de nuevo', 'PERMISO'],
+        ['Errores que *te cuestan caro*', 'Callarte lo que sientes\nCompararte con otros\nDejarlo para mañana\nRodearte de quien te apaga', 'CUIDADO'],
+        ['Lo que *más valoras* con los años', 'La tranquilidad\nLa familia\nLa salud\nLa gente leal', 'CON EL TIEMPO']
+      ]
+    },
+    dato: {
+      name: 'Número que impacta', hint: 'Un número grande detiene el dedo al hacer scroll; la frase de abajo da el golpe.',
+      lblTexto: 'Número o palabra grande', lblExtra: 'Explicación',
+      cta: '¿En qué lo estás usando?', caption: 'Piénsalo un momento. ¿En qué estás gastando lo que más vale?',
+      bank: [
+        ['86.400', 'son los segundos que tiene tu día. ¿En qué los estás gastando?', 'PIÉNSALO'],
+        ['24', 'horas tienes hoy. Nadie tiene más. *Úsalas bien.*', 'PIÉNSALO'],
+        ['1 minuto', 'es lo que dura un mal momento. El mal humor dura *lo que tú quieras.*', 'RECUERDA'],
+        ['52', 'fines de semana al año. ¿Cuántos has disfrutado *de verdad?*', 'PIÉNSALO'],
+        ['365', 'días nuevos cada año. *Hoy* es uno de ellos.', 'EMPIEZA'],
+        ['0', 'personas pueden vivir tu vida por ti. *Hazla valer.*', 'VERDAD'],
+        ['1%', 'mejor cada día. Eso es todo lo que necesitas para *cambiar.*', 'CONSTANCIA'],
+        ['100%', 'de tu atención se la merece quien *te la da a ti.*', 'VERDAD']
+      ]
+    },
+    verdad: {
+      name: 'Verdad incómoda', hint: 'Una frase directa que divide opiniones y empuja a comentar "tienes razón".',
+      lblTexto: 'Frase', lblExtra: 'Nota pequeña (opcional)',
+      cta: '¿Estás de acuerdo?', caption: '¿Estás de acuerdo o no? Léete en los comentarios.',
+      bank: [
+        ['Nadie te va a *valorar* más de lo que tú te valoras.', '', 'VERDAD INCÓMODA'],
+        ['Si te *cuesta* tanto, quizá no es para ti.', '', 'VERDAD INCÓMODA'],
+        ['No es *falta de tiempo.* Es falta de prioridad.', '', 'VERDAD INCÓMODA'],
+        ['El que *quiere* encuentra la forma. El que no, una excusa.', '', 'VERDAD INCÓMODA'],
+        ['Lo que *toleras*, se repite.', '', 'VERDAD INCÓMODA'],
+        ['Tu *paz* vale más que tener la razón.', '', 'VERDAD INCÓMODA'],
+        ['No todos los que *sonríen* están bien.', '', 'VERDAD INCÓMODA'],
+        ['Quien te quiere *no te hace dudar.*', '', 'VERDAD INCÓMODA']
+      ]
+    }
+  };
+
+  var order = ['elige', 'completa', 'reflexion', 'comparte', 'lista', 'dato', 'verdad'];
+  var state = { fmt: 'reflexion', idx: 1, theme: 'noche', font: 'Anton', size: '1080x1350', texto: '', extra: '', tag: '', cta: '', handle: '' };
+
+  /* ---------- text layout ---------- */
+  function headFont(px) { return (state.font === 'Anton' ? '400 ' : '800 ') + px + 'px ' + (state.font === 'Anton' ? 'Anton, Impact, "Arial Narrow", sans-serif' : 'Montserrat, "Arial Black", Arial, sans-serif'); }
+  function bodyFont(px) { return '800 ' + px + 'px Montserrat, "Arial Black", Arial, sans-serif'; }
+
+  function tokenize(text) {
+    return String(text || '').split('\n').map(function (line) {
+      var toks = [];
+      var prevEnd = true;
+      line.split('*').forEach(function (part, i) {
+        var glue = i > 0 && toks.length && !prevEnd && !/^\s/.test(part);
+        if (part.length) prevEnd = /\s$/.test(part);
+        part.split(/\s+/).filter(Boolean).forEach(function (w, k) {
+          if (glue && k === 0) { toks[toks.length - 1].w += w; return; }
+          toks.push({ w: w, hl: i % 2 === 1 || /^_{2,}[.,;:!?]*$/.test(w) });
+        });
+      });
+      return toks;
+    });
+  }
+
+  function layout(ctx, text, fontFn, size, maxW) {
+    ctx.font = fontFn(size);
+    var space = ctx.measureText(' ').width, lines = [], ok = true;
+    tokenize(text).forEach(function (toks) {
+      if (!toks.length) { lines.push({ toks: [], width: 0 }); return; }
+      var cur = { toks: [], width: 0 };
+      toks.forEach(function (t) {
+        var w = ctx.measureText(t.w).width;
+        if (w > maxW) ok = false;
+        var add = cur.toks.length ? space + w : w;
+        if (cur.toks.length && cur.width + add > maxW) { lines.push(cur); cur = { toks: [], width: 0 }; add = w; }
+        cur.toks.push({ w: t.w, hl: t.hl, width: w });
+        cur.width += add;
+      });
+      lines.push(cur);
+    });
+    return { lines: lines, ok: ok, space: space };
+  }
+
+  function fit(ctx, text, fontFn, maxW, maxH, maxS, minS, lh) {
+    var s = maxS, L;
+    for (; s >= minS; s -= 2) {
+      L = layout(ctx, text, fontFn, s, maxW);
+      if (L.ok && L.lines.length * s * lh <= maxH) break;
+    }
+    if (s < minS) { s = minS; L = layout(ctx, text, fontFn, s, maxW); }
+    return { L: L, size: s, lh: lh, height: L.lines.length * s * lh };
+  }
+
+  function drawFit(ctx, f, fontFn, x, y, align, colors, hlStyle) {
+    ctx.font = fontFn(f.size);
+    ctx.textBaseline = 'middle';
+    var ls = f.size * f.lh;
+    f.L.lines.forEach(function (ln, i) {
+      var cy = y + i * ls + ls / 2;
+      var sx = align === 'center' ? x - ln.width / 2 : x;
+      ln.toks.forEach(function (t, k) {
+        if (t.hl && hlStyle === 'bar') {
+          ctx.fillStyle = colors.accent;
+          rr(ctx, sx - f.size * 0.12, cy - f.size * 0.52, t.width + f.size * 0.24, f.size * 1.04, f.size * 0.12); ctx.fill();
+          ctx.fillStyle = colors.barText;
+        } else ctx.fillStyle = t.hl ? colors.accent : colors.fg;
+        ctx.textAlign = 'left';
+        ctx.fillText(t.w, sx, cy);
+        sx += t.width + f.L.space;
+      });
+    });
+  }
+
+  function rr(ctx, x, y, w, h, r) {
+    r = Math.min(r, w / 2, h / 2);
+    ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+  }
+
+  function pill(ctx, cx, cy, text, t, filled, maxW) {
+    var size = 36; ctx.font = bodyFont(size);
+    var w = Math.min(maxW || 900, ctx.measureText(text).width + 90);
+    while (ctx.measureText(text).width + 60 > w && size > 20) { size -= 2; ctx.font = bodyFont(size); }
+    rr(ctx, cx - w / 2, cy - 42, w, 84, 42);
+    if (filled) { ctx.fillStyle = t.accent; ctx.fill(); } else { ctx.lineWidth = 4; ctx.strokeStyle = t.accent; ctx.stroke(); }
+    ctx.fillStyle = filled ? t.barText : t.accent; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(text, cx, cy + 3);
+    return w;
+  }
+
+  function chevron(ctx, cx, cy, s, color) {
+    ctx.strokeStyle = color; ctx.lineWidth = s * 0.28; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(cx - s, cy - s * 0.5); ctx.lineTo(cx, cy + s * 0.5); ctx.lineTo(cx + s, cy - s * 0.5); ctx.stroke();
+  }
+
+  function tagPill(ctx, t, text) {
+    if (!text) return;
+    var size = 30; ctx.font = bodyFont(size);
+    var w = ctx.measureText(text.toUpperCase()).width + 70;
+    rr(ctx, W / 2 - w / 2, 92, w, 62, 31); ctx.fillStyle = t.accent; ctx.fill();
+    ctx.fillStyle = t.barText; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(text.toUpperCase(), W / 2, 124);
+  }
+
+  function footer(ctx, t, s) {
+    var y = H - 70;
+    if (s.handle) {
+      ctx.font = bodyFont(32); ctx.fillStyle = t.muted; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(s.handle, W / 2, y);
+    }
+  }
+
+  function bg(ctx, t) {
+    var g = ctx.createLinearGradient(0, 0, W * 0.4, H);
+    g.addColorStop(0, t.bg1); g.addColorStop(1, t.bg2);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    ctx.save(); ctx.globalAlpha = 0.09; ctx.fillStyle = t.accent;
+    ctx.beginPath(); ctx.arc(W + 40, -20, 360, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.arc(-60, H + 30, 300, 0, 7); ctx.fill();
+    ctx.restore();
+  }
+
+  /* ---------- formats ---------- */
+  var M = 90;
+  var draw = {
+    elige: function (ctx, t, s) {
+      tagPill(ctx, t, s.tag);
+      var q = fit(ctx, s.texto, headFont, W - 2 * M, H * 0.17, 120, 50, 1.12);
+      drawFit(ctx, q, headFont, W / 2, 185, 'center', t, 'color');
+      var opts = s.extra.split('\n').filter(function (x) { return x.trim(); }).slice(0, 2);
+      var pw = (W - 2 * M - 40) / 2, y0 = H * 0.36, ph = H * 0.4;
+      opts.forEach(function (o, i) {
+        var x = M + i * (pw + 40);
+        rr(ctx, x, y0, pw, ph, 36); ctx.fillStyle = i === 0 ? t.accent : t.fg; ctx.fill();
+        var ink = i === 0 ? t.barText : t.bg1;
+        ctx.font = headFont(210); ctx.fillStyle = ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(i === 0 ? 'A' : 'B', x + pw / 2, y0 + ph * 0.3);
+        var f = fit(ctx, o, bodyFont, pw - 70, ph * 0.38, 54, 26, 1.15);
+        drawFit(ctx, f, bodyFont, x + pw / 2, y0 + ph * 0.58, 'center', { fg: ink, accent: ink }, 'color');
+      });
+      pill(ctx, W / 2, H - 200, s.cta, t, true, 860);
+    },
+    completa: function (ctx, t, s) {
+      tagPill(ctx, t, s.tag);
+      var f = fit(ctx, s.texto, headFont, W - 2 * M, H * 0.52, 150, 56, 1.18);
+      drawFit(ctx, f, headFont, W / 2, 190 + (H * 0.52 - f.height) / 2, 'center', t, 'color');
+      if (s.extra) { ctx.font = bodyFont(34); ctx.fillStyle = t.muted; ctx.textAlign = 'center'; ctx.fillText(s.extra, W / 2, H - 330); }
+      var w = pill(ctx, W / 2, H - 200, s.cta, t, true, 900);
+      chevron(ctx, W / 2, H - 120, 22, t.accent);
+    },
+    reflexion: function (ctx, t, s) {
+      tagPill(ctx, t, s.tag);
+      ctx.save(); ctx.globalAlpha = 0.9; ctx.font = headFont(340); ctx.fillStyle = t.accent; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+      ctx.fillText('“', M - 10, 440); ctx.restore();
+      var f = fit(ctx, s.texto, headFont, W - 2 * M, H * 0.46, 120, 50, 1.2);
+      drawFit(ctx, f, headFont, W / 2, 380 + (H * 0.46 - f.height) / 2, 'center', t, 'color');
+      var by = 380 + H * 0.46 + 40;
+      ctx.fillStyle = t.accent; ctx.fillRect(W / 2 - 60, by, 120, 8);
+      if (s.extra) { ctx.font = bodyFont(34); ctx.fillStyle = t.muted; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(s.extra, W / 2, by + 56); }
+      ctx.font = bodyFont(34); ctx.fillStyle = t.fg; ctx.textAlign = 'center'; ctx.fillText(s.cta, W / 2, H - 150);
+    },
+    comparte: function (ctx, t, s) {
+      tagPill(ctx, t, s.tag);
+      var f = fit(ctx, s.texto, headFont, W - 2 * M, H * 0.5, 140, 52, 1.2);
+      drawFit(ctx, f, headFont, W / 2, 210 + (H * 0.5 - f.height) / 2, 'center', t, 'color');
+      if (s.extra) { ctx.font = bodyFont(32); ctx.fillStyle = t.muted; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(s.extra, W / 2, H - 340); }
+      var parts = s.cta.split('|').map(function (x) { return x.trim(); }).filter(Boolean).slice(0, 2);
+      if (parts.length === 2) {
+        var pw = (W - 2 * M - 30) / 2;
+        parts.forEach(function (p, i) {
+          var cx = M + pw / 2 + i * (pw + 30), cy = H - 200;
+          rr(ctx, cx - pw / 2, cy - 48, pw, 96, 48);
+          if (i === 0) { ctx.fillStyle = t.accent; ctx.fill(); } else { ctx.lineWidth = 5; ctx.strokeStyle = t.accent; ctx.stroke(); }
+          var size = 34; ctx.font = bodyFont(size);
+          while (ctx.measureText(p).width > pw - 40 && size > 20) { size -= 2; ctx.font = bodyFont(size); }
+          ctx.fillStyle = i === 0 ? t.barText : t.accent; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText(p, cx, cy + 3);
+        });
+      } else pill(ctx, W / 2, H - 200, s.cta, t, true, 900);
+    },
+    lista: function (ctx, t, s) {
+      tagPill(ctx, t, s.tag);
+      var f = fit(ctx, s.texto, headFont, W - 2 * M, H * 0.2, 104, 50, 1.12);
+      drawFit(ctx, f, headFont, W / 2, 185, 'center', t, 'color');
+      var items = s.extra.split('\n').filter(function (x) { return x.trim(); }).slice(0, 5);
+      var top = 185 + H * 0.2 + 30, avail = H - 270 - top, rowH = Math.min(150, avail / Math.max(items.length, 1));
+      items.forEach(function (it, i) {
+        var cy = top + i * rowH + rowH / 2;
+        ctx.beginPath(); ctx.arc(M + 36, cy, 36, 0, 7); ctx.fillStyle = t.accent; ctx.fill();
+        ctx.strokeStyle = t.barText; ctx.lineWidth = 9; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        ctx.beginPath(); ctx.moveTo(M + 20, cy + 2); ctx.lineTo(M + 32, cy + 15); ctx.lineTo(M + 54, cy - 14); ctx.stroke();
+        var g = fit(ctx, it, bodyFont, W - 2 * M - 110, rowH - 14, 50, 24, 1.15);
+        drawFit(ctx, g, bodyFont, M + 100, cy - g.height / 2, 'left', t, 'color');
+      });
+      pill(ctx, W / 2, H - 170, s.cta, t, true, 860);
+    },
+    dato: function (ctx, t, s) {
+      tagPill(ctx, t, s.tag);
+      var f = fit(ctx, s.texto, headFont, W - 2 * M, H * 0.36, 430, 90, 1.0);
+      drawFit(ctx, f, headFont, W / 2, 200 + (H * 0.36 - f.height) / 2, 'center', { fg: t.accent, accent: t.accent }, 'color');
+      var g = fit(ctx, s.extra, bodyFont, W - 2 * M - 40, H * 0.26, 62, 30, 1.25);
+      drawFit(ctx, g, bodyFont, W / 2, 200 + H * 0.36 + 50, 'center', t, 'color');
+      pill(ctx, W / 2, H - 190, s.cta, t, false, 860);
+    },
+    verdad: function (ctx, t, s) {
+      tagPill(ctx, t, s.tag);
+      var f = fit(ctx, s.texto, headFont, W - 2 * M - 20, H * 0.54, 136, 54, 1.32);
+      drawFit(ctx, f, headFont, W / 2, 220 + (H * 0.54 - f.height) / 2, 'center', t, 'bar');
+      if (s.extra) { ctx.font = bodyFont(32); ctx.fillStyle = t.muted; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(s.extra, W / 2, H - 330); }
+      pill(ctx, W / 2, H - 200, s.cta, t, true, 860);
+    }
+  };
+
+  function theme() { return THEMES.filter(function (x) { return x.id === state.theme; })[0]; }
+
+  function render(canvas) {
+    var parts = state.size.split('x'); W = +parts[0]; H = +parts[1];
+    canvas.width = W; canvas.height = H;
+    var ctx = canvas.getContext('2d'), t = theme();
+    bg(ctx, t);
+    draw[state.fmt](ctx, t, state);
+    footer(ctx, t, state);
+  }
+
+  /* ---------- UI ---------- */
+  var cv = $('cv');
+  function paint() { render(cv); }
+
+  function loadPreset(i) {
+    var F = FORMATS[state.fmt];
+    state.idx = ((i % F.bank.length) + F.bank.length) % F.bank.length;
+    var p = F.bank[state.idx];
+    state.texto = p[0]; state.extra = p[1]; state.tag = p[2]; state.cta = F.cta;
+    syncFields(); paint();
+  }
+
+  function syncFields() {
+    var F = FORMATS[state.fmt];
+    $('texto').value = state.texto; $('extra').value = state.extra; $('tag').value = state.tag; $('cta').value = state.cta;
+    $('lblTexto').textContent = F.lblTexto; $('lblExtra').textContent = F.lblExtra;
+    $('fmtHint').textContent = F.hint; $('caption').value = F.caption;
+  }
+
+  function buildFormats() {
+    var box = $('formats'); box.innerHTML = '';
+    order.forEach(function (id) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'chip'; b.textContent = FORMATS[id].name;
+      b.setAttribute('aria-pressed', id === state.fmt ? 'true' : 'false');
+      b.onclick = function () { state.fmt = id; buildFormats(); loadPreset(0); };
+      box.appendChild(b);
+    });
+  }
+
+  function buildThemes() {
+    var box = $('themes'); box.innerHTML = '';
+    THEMES.forEach(function (t) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'sw'; b.title = t.name; b.setAttribute('aria-label', t.name);
+      b.style.background = 'linear-gradient(135deg,' + t.bg1 + ' 55%,' + t.accent + ' 55%)';
+      b.setAttribute('aria-pressed', t.id === state.theme ? 'true' : 'false');
+      b.onclick = function () { state.theme = t.id; buildThemes(); paint(); };
+      box.appendChild(b);
+    });
+  }
+
+  ['texto', 'extra', 'tag', 'cta', 'handle'].forEach(function (k) {
+    $(k).addEventListener('input', function () { state[k] = $(k).value; paint(); });
+  });
+  $('size').addEventListener('change', function () { state.size = $('size').value; paint(); });
+  $('font').addEventListener('change', function () { state.font = $('font').value; paint(); });
+  $('rand').addEventListener('click', function () { loadPreset(state.idx + 1); });
+  $('copy').addEventListener('click', function () {
+    var v = $('caption').value;
+    try { navigator.clipboard.writeText(v).then(function () { $('copy').textContent = 'Copiado'; setTimeout(function () { $('copy').textContent = 'Copiar texto'; }, 1500); }, fallback); } catch (e) { fallback(); }
+    function fallback() { $('caption').select(); }
+  });
+  $('dl').addEventListener('click', function () {
+    var name = 'frase-' + state.fmt + '-' + (state.idx + 1) + '.png';
+    var url = cv.toDataURL('image/png');
+    $('outImg').src = url; $('out').hidden = false;
+    function plain() {
+      var a = document.createElement('a'); a.href = url; a.download = name;
+      document.body.appendChild(a); a.click(); a.remove();
+    }
+    var use = window.claude && window.claude.use ? window.claude.use('downloads') : Promise.resolve(null);
+    use.then(function (d) {
+      if (!d) return plain();
+      cv.toBlob(function (blob) { d.save({ filename: name, data: blob }).catch(function () {}); }, 'image/png');
+    }, plain);
+    $('out').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+
+  /* hook for batch export */
+  window.VIRAL = {
+    formats: order,
+    count: function (f) { return FORMATS[f].bank.length; },
+    themes: THEMES.map(function (t) { return t.id; }),
+    png: function (f, i, th, size) {
+      state.fmt = f; state.theme = th || state.theme; state.size = size || state.size;
+      var F = FORMATS[f], p = F.bank[i];
+      state.idx = i; state.texto = p[0]; state.extra = p[1]; state.tag = p[2]; state.cta = F.cta;
+      var c = document.createElement('canvas'); render(c); return c.toDataURL('image/png');
+    }
+  };
+
+  buildFormats(); buildThemes(); loadPreset(1);
+  if (document.fonts && document.fonts.load) {
+    Promise.all([document.fonts.load('400 60px Anton'), document.fonts.load('800 40px Montserrat')]).then(paint, paint);
+    document.fonts.ready.then(paint);
+  }
+})();
+</script>

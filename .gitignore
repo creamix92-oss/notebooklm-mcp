@@ -48,3 +48,6 @@ venv/
 .playwright-mcp/
 tmp/
 studio-*.png
+out/*.mp4
+out/*.zip
+out/frases_virales/png/
