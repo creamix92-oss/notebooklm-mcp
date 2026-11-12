@@ -19,7 +19,7 @@ funden en un solo clip, y en videos grabados se quedan los mejores.
 
 ## Arranque
 
-Requisitos: **Python 3.10+**. ffmpeg se instala solo si no lo tienes.
+Requisitos: **Python 3.10 a 3.13 de 64 bits** (en Windows `run.bat` lo instala solo si falta). ffmpeg se instala solo si no lo tienes.
 Para YouTube conviene tener **Node.js** o **Deno** instalado (yt-dlp lo usa para resolver los enlaces).
 
 - **Windows:** doble clic en `run.bat`
