@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ClipRadar — clipper por sonido</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📡</text></svg>">
+<style>
+:root{
+  --bg:#0c0d12; --panel:#15171f; --panel2:#1c1f2a; --line:#2a2e3d; --text:#eef0f6; --muted:#8d93a8;
+  --accent:#c6ff3d; --accent-ink:#0c0d12; --live:#ff4d5e; --warn:#ffb020; --ok:#3ddc97; --radius:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 80px}
+header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.logo{font-size:22px;font-weight:800;letter-spacing:-.02em}
+.logo span{color:var(--accent)}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+.pill{font-size:12px;padding:4px 10px;border-radius:99px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.pill.ok{color:var(--ok)} .pill.bad{color:var(--warn)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:18px 0 8px;font-weight:700}
+h2:first-child{margin-top:0}
+.urlrow{display:flex;gap:8px;flex-wrap:wrap}
+.urlrow input[type=url]{flex:1 1 320px;min-width:0;padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:var(--bg);font-size:16px;outline:none}
+.urlrow input[type=url]:focus,.tags:focus-within,.field input:focus,.field select:focus{border-color:var(--accent)}
+.btn{border:1px solid var(--line);background:var(--panel2);border-radius:12px;padding:10px 14px;cursor:pointer;font-weight:600;white-space:nowrap}
+a.btn{color:inherit;text-decoration:none;display:inline-block}
+.btn:hover{border-color:#454b63}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);padding:14px 22px;font-size:16px}
+.btn.primary:disabled{opacity:.5;cursor:wait}
+.btn.small{padding:6px 10px;font-size:13px;border-radius:9px}
+.btn.danger:hover{border-color:var(--live);color:var(--live)}
+.seg{display:inline-flex;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:3px}
+.seg button{border:0;background:none;padding:8px 14px;border-radius:9px;cursor:pointer;color:var(--muted);font-weight:600}
+.seg button.on{background:var(--panel2);color:var(--text)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--bg);border-radius:99px;padding:8px 14px;cursor:pointer;user-select:none;font-weight:600;color:var(--muted)}
+.chip.on{background:rgba(198,255,61,.12);border-color:var(--accent);color:var(--text)}
+.tags{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:8px;border:1px solid var(--line);background:var(--bg);border-radius:12px;cursor:text}
+.tag{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:4px 6px 4px 10px;display:inline-flex;gap:6px;align-items:center}
+.tag button{border:0;background:none;color:var(--muted);cursor:pointer;padding:0 4px;font-size:16px;line-height:1}
+.tags input{flex:1 1 180px;min-width:120px;border:0;background:none;outline:none;padding:6px}
+.hint{color:var(--muted);font-size:13px;margin-top:6px}
+details.adv{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+details.adv summary{cursor:pointer;color:var(--muted);font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-top:12px}
+.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+.field input,.field select{width:100%;padding:9px 10px;border-radius:9px;border:1px solid var(--line);background:var(--bg);outline:none}
+.field input[type=range]{padding:0;accent-color:var(--accent)}
+.check{display:flex;align-items:center;gap:8px;padding-top:20px}
+.check input{width:18px;height:18px;accent-color:var(--accent)}
+.actions{display:flex;gap:10px;align-items:center;margin-top:18px;flex-wrap:wrap}
+#jobs{margin-top:26px;display:flex;flex-direction:column;gap:16px}
+.job-head{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.job-title{font-weight:700;font-size:16px;overflow-wrap:anywhere;flex:1 1 260px;min-width:0}
+.job-sub{color:var(--muted);font-size:13px;margin-top:2px;overflow-wrap:anywhere}
+.badge{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:6px;background:var(--panel2);color:var(--muted);margin-right:6px}
+.badge.live{background:var(--live);color:#fff;animation:pulse 1.6s infinite}
+.badge.done{color:var(--ok)} .badge.error{color:var(--live)}
+@keyframes pulse{50%{opacity:.55}}
+.bar{height:6px;background:var(--bg);border-radius:9px;overflow:hidden;margin-top:12px}
+.bar i{display:block;height:100%;background:var(--accent);transition:width .5s}
+.timeline{position:relative;height:26px;background:var(--bg);border-radius:8px;margin-top:12px;overflow:hidden}
+.timeline .clipspan{position:absolute;top:0;bottom:0;background:rgba(198,255,61,.22);border-left:2px solid var(--accent)}
+.timeline .hit{position:absolute;top:4px;bottom:4px;width:2px;background:#fff;opacity:.55}
+.timeline .hit.palabra{background:#59b8ff;opacity:1}
+.clips{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-top:14px}
+.clip{background:var(--panel2);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.clip video{width:100%;aspect-ratio:9/16;background:#000;display:block;object-fit:contain}
+.clip.wide video{aspect-ratio:16/9}
+.clip-body{padding:10px;display:flex;flex-direction:column;gap:8px}
+.clip-title{display:flex;gap:6px}
+.clip-title input{min-width:0;padding:7px 8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);outline:none}
+.clip-title .em{width:46px;text-align:center;flex:none}
+.clip-title .ti{flex:1}
+.clip-meta{font-size:12px;color:var(--muted)}
+.clip-actions{display:flex;gap:6px;flex-wrap:wrap}
+.clip-actions a{text-decoration:none}
+.manual{display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.manual .field{flex:0 1 110px} .manual .field.wide{flex:1 1 200px}
+pre.log{background:var(--bg);border-radius:8px;padding:10px;font-size:12px;color:var(--muted);max-height:180px;overflow:auto;white-space:pre-wrap;margin:10px 0 0}
+.empty{color:var(--muted);text-align:center;padding:30px 10px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#fff;color:#111;padding:10px 16px;border-radius:10px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw}
+#toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">📡 Clip<span>Radar</span></div>
+    <div class="job-sub">Pega un directo o video, dile qué escuchar y recibe los shorts.</div>
+    <div class="pills" id="pills"></div>
+  </header>
+
+  <div class="card">
+    <h2>1 · Enlace</h2>
+    <div class="urlrow">
+      <input id="url" type="url" placeholder="https://youtube.com/watch?v=…  ·  twitch.tv/…  ·  kick.com/…" autocomplete="off">
+      <div class="seg" id="mode">
+        <button data-v="auto" class="on" title="Detecta solo si es un directo">Auto</button>
+        <button data-v="vod">Video</button>
+        <button data-v="live">🔴 En vivo</button>
+      </div>
+    </div>
+    <div class="hint">¿Tienes el video en tu PC? <label style="color:var(--accent);cursor:pointer;font-weight:600">Súbelo aquí<input id="file" type="file" accept="video/*,audio/*" hidden></label> <span id="fileName"></span></div>
+
+    <h2>2 · ¿Qué sonidos disparan un clip?</h2>
+    <div class="chips" id="sounds"></div>
+
+    <h2>3 · Palabras, frases o nombres</h2>
+    <div class="tags" id="tags"><input id="tagInput" placeholder="Escribe y pulsa Enter: golazo, no puede ser, Juan…"></div>
+    <div class="hint">Cuando alguien lo diga, se guarda el momento. Ignora mayúsculas y acentos.</div>
+
+    <details class="adv" id="adv">
+      <summary>Ajustes del clip</summary>
+      <div class="grid">
+        <div class="field"><label>Sensibilidad <span id="sensV"></span></label><input id="sensitivity" type="range" min="0" max="1" step="0.05"></div>
+        <div class="field"><label>Segundos antes del momento</label><input id="pre" type="number" min="0" max="120" step="1"></div>
+        <div class="field"><label>Segundos después</label><input id="post" type="number" min="1" max="180" step="1"></div>
+        <div class="field"><label>Duración máxima (s)</label><input id="max_len" type="number" min="5" max="600" step="1"></div>
+        <div class="field"><label>Máx. de clips (video)</label><input id="max_clips" type="number" min="1" max="200" step="1"></div>
+        <div class="field"><label>Formato</label><select id="layout">
+          <option value="vertical_blur">Vertical 9:16 · fondo difuminado</option>
+          <option value="vertical_crop">Vertical 9:16 · recorte al centro</option>
+          <option value="original">Original (horizontal)</option></select></div>
+        <div class="field"><label>Idioma hablado</label><select id="language">
+          <option value="es">Español</option><option value="en">Inglés</option><option value="pt">Portugués</option><option value="">Autodetectar</option></select></div>
+        <div class="field"><label>Precisión de transcripción</label><select id="whisper_model">
+          <option value="tiny">Rápida (tiny)</option><option value="base">Básica (base)</option><option value="small">Equilibrada (small)</option>
+          <option value="medium">Alta (medium)</option><option value="large-v3-turbo">Máxima (large-v3-turbo)</option></select></div>
+        <div class="field"><label>Calidad de descarga</label><select id="quality">
+          <option value="480">480p</option><option value="720">720p</option><option value="1080">1080p</option></select></div>
+        <label class="check"><input id="show_title" type="checkbox"> Título + emoji en el video</label>
+        <label class="check"><input id="captions" type="checkbox"> Subtítulos quemados</label>
+        <label class="check"><input id="smart_titles" type="checkbox"> Titular con lo que se dijo</label>
+      </div>
+    </details>
+
+    <div class="actions">
+      <button class="btn primary" id="go">✂ Empezar a clipear</button>
+      <span class="hint" id="formMsg" style="margin:0"></span>
+    </div>
+  </div>
+
+  <div id="jobs"></div>
+</div>
+<div id="toast"></div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, props = {}, ...kids) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(props)) {
+    if (k === 'class') n.className = v; else if (k === 'text') n.textContent = v;
+    else if (k.startsWith('on')) n.addEventListener(k.slice(2), v); else if (v !== false && v != null) n.setAttribute(k, v);
+  }
+  for (const kid of kids.flat()) if (kid != null) n.append(kid);
+  return n;
+};
+const api = async (path, opts = {}) => {
+  if (opts.json) { opts.body = JSON.stringify(opts.json); opts.headers = {'Content-Type': 'application/json'}; }
+  const r = await fetch(path, opts);
+  if (!r.ok) { let m = r.statusText; try { m = (await r.json()).detail || m; } catch {} throw new Error(m); }
+  return r.json();
+};
+const toast = (msg) => { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 3200); };
+const clock = (s) => { s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(x).padStart(2, '0'); };
+const parseClock = (v) => { const p = String(v).trim().split(':').map(Number); if (p.some(isNaN)) return NaN; return p.reduce((a, b) => a * 60 + b, 0); };
+
+/* ---------- formulario ---------- */
+const NUM = ['pre', 'post', 'max_len', 'max_clips', 'sensitivity'], SEL = ['layout', 'language', 'whisper_model', 'quality'], CHK = ['show_title', 'captions', 'smart_titles'];
+let state = {mode: 'auto', sounds: [], hype: true, keywords: []};
+let KINDS = {palabra: {emoji: '🗣️', label: 'Palabra clave'}, manual: {emoji: '🎬', label: 'Manual'}};
+
+function saveForm() {
+  const s = {...state};
+  [...NUM, ...SEL].forEach(k => s[k] = $('#' + k).value);
+  CHK.forEach(k => s[k] = $('#' + k).checked);
+  try { localStorage.setItem('clipradar', JSON.stringify(s)); } catch {}
+}
+function settings() {
+  const s = {sounds: state.sounds, hype: state.hype, keywords: state.keywords};
+  NUM.forEach(k => s[k] = Number($('#' + k).value));
+  SEL.forEach(k => s[k] = $('#' + k).value);
+  s.quality = Number(s.quality);
+  CHK.forEach(k => s[k] = $('#' + k).checked);
+  return s;
+}
+function renderTags() {
+  const box = $('#tags');
+  box.querySelectorAll('.tag').forEach(t => t.remove());
+  state.keywords.forEach((k, i) => box.insertBefore(
+    el('span', {class: 'tag'}, k, el('button', {text: '×', title: 'Quitar', onclick: () => { state.keywords.splice(i, 1); renderTags(); saveForm(); }})), $('#tagInput')));
+}
+function addTag(raw) {
+  raw.split(',').map(s => s.trim()).filter(Boolean).forEach(k => { if (!state.keywords.some(x => x.toLowerCase() === k.toLowerCase())) state.keywords.push(k); });
+  renderTags(); saveForm();
+}
+$('#tagInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(e.target.value); e.target.value = ''; }
+  else if (e.key === 'Backspace' && !e.target.value && state.keywords.length) { state.keywords.pop(); renderTags(); saveForm(); }
+});
+$('#tagInput').addEventListener('blur', e => { if (e.target.value.trim()) { addTag(e.target.value); e.target.value = ''; } });
+$('#tags').addEventListener('click', () => $('#tagInput').focus());
+$('#mode').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; state.mode = b.dataset.v; syncMode(); saveForm(); });
+const syncMode = () => $('#mode').querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.v === state.mode));
+$('#sensitivity').addEventListener('input', e => $('#sensV').textContent = '· ' + Math.round(e.target.value * 100) + '%');
+document.addEventListener('change', e => { if (e.target.closest('#adv')) saveForm(); });
+$('#file').addEventListener('change', e => { const f = e.target.files[0]; $('#fileName').textContent = f ? '· ' + f.name : ''; });
+
+function renderSounds(list, hype) {
+  const box = $('#sounds'); box.textContent = '';
+  const chip = (id, emoji, label, on, toggle) => box.append(el('div', {class: 'chip' + (on ? ' on' : ''), role: 'button', onclick: () => { toggle(); renderSounds(list, hype); saveForm(); }}, emoji + ' ' + label));
+  list.forEach(s => chip(s.id, s.emoji, s.label, state.sounds.includes(s.id), () => { state.sounds = state.sounds.includes(s.id) ? state.sounds.filter(x => x !== s.id) : [...state.sounds, s.id]; }));
+  chip('hype', hype.emoji, hype.label, state.hype, () => { state.hype = !state.hype; });
+}
+
+async function init() {
+  const st = await api('/api/status');
+  const d = st.defaults;
+  let saved = {}; try { saved = JSON.parse(localStorage.getItem('clipradar') || '{}'); } catch {}
+  state = {mode: saved.mode || 'auto', sounds: saved.sounds || d.sounds, hype: saved.hype ?? d.hype, keywords: saved.keywords || []};
+  [...NUM, ...SEL].forEach(k => $('#' + k).value = saved[k] ?? d[k]);
+  CHK.forEach(k => $('#' + k).checked = saved[k] ?? d[k]);
+  $('#sensitivity').dispatchEvent(new Event('input'));
+  st.sounds.forEach(s => KINDS[s.id] = s); KINDS.hype = st.hype;
+  syncMode(); renderSounds(st.sounds, st.hype); renderTags(); pills(st);
+  poll();
+}
+function pills(st) {
+  const p = $('#pills'); p.textContent = '';
+  const add = (ok, text, title) => p.append(el('span', {class: 'pill ' + (ok ? 'ok' : 'bad'), title: title || ''}, (ok ? '● ' : '▲ ') + text));
+  add(st.ffmpeg, 'ffmpeg', st.ffmpeg_error);
+  add(st.yamnet.available, 'Sonidos' + (st.yamnet.loaded ? '' : st.yamnet.available ? ' (se descarga al usar)' : ' no disponible'), st.yamnet.reason);
+  add(st.whisper.available, 'Voz' + (st.whisper.loaded.length ? '' : st.whisper.available ? ' (se descarga al usar)' : ' no disponible'), st.whisper.reason);
+}
+
+$('#go').addEventListener('click', async () => {
+  const url = $('#url').value.trim(), file = $('#file').files[0], s = settings(), btn = $('#go');
+  if (!url && !file) return toast('Pega un enlace o sube un video');
+  if (!s.sounds.length && !s.hype && !s.keywords.length) return toast('Elige al menos un sonido o una palabra');
+  btn.disabled = true;
+  try {
+    if (file && !url) {
+      $('#formMsg').textContent = 'Subiendo ' + file.name + '…';
+      const fd = new FormData(); fd.append('file', file); fd.append('settings', JSON.stringify(s));
+      await api('/api/upload', {method: 'POST', body: fd});
+      $('#file').value = ''; $('#fileName').textContent = '';
+    } else {
+      await api('/api/jobs', {method: 'POST', json: {url, mode: state.mode, settings: s}});
+      $('#url').value = '';
+    }
+    $('#formMsg').textContent = '';
+    refresh();
+  } catch (e) { $('#formMsg').textContent = ''; toast(e.message); }
+  btn.disabled = false;
+});
+
+/* ---------- trabajos ---------- */
+const STATUS = {queued: 'En cola', downloading: 'Descargando', analyzing: 'Escuchando', rendering: 'Creando shorts', live: 'En vivo', done: 'Listo', error: 'Error', stopped: 'Detenido'};
+const ACTIVE = new Set(['queued', 'downloading', 'analyzing', 'rendering', 'live']);
+const cards = new Map(); // id -> {root, sigHead, sigClips, sigHits}
+const openLogs = new Set();
+
+function jobCard(j) {
+  const c = {root: el('div', {class: 'card'}), sigHead: '', sigClips: '', sigHits: ''};
+  c.head = el('div'); c.timeline = el('div'); c.clips = el('div'); c.extra = el('div');
+  c.root.append(c.head, c.timeline, c.clips, c.extra);
+  return c;
+}
+function drawHead(c, j) {
+  const active = ACTIVE.has(j.status);
+  c.head.textContent = '';
+  c.head.append(el('div', {class: 'job-head'},
+    el('div', {style: 'flex:1 1 260px;min-width:0'},
+      el('div', {class: 'job-title'}, el('span', {class: 'badge ' + j.status}, STATUS[j.status] || j.status), j.title),
+      el('div', {class: 'job-sub', text: j.message})),
+    el('div', {style: 'display:flex;gap:6px;flex-wrap:wrap'},
+      j.clips.length ? el('a', {class: 'btn small', href: `/api/jobs/${j.id}/zip`, text: `⬇ Todos (${j.clips.length})`}) : null,
+      el('button', {class: 'btn small', text: 'Registro', onclick: () => { openLogs.has(j.id) ? openLogs.delete(j.id) : openLogs.add(j.id); c.sigHits = ''; refresh(); }}),
+      active ? el('button', {class: 'btn small danger', text: j.status === 'live' ? '■ Detener directo' : '■ Cancelar', onclick: async () => { await api(`/api/jobs/${j.id}/stop`, {method: 'POST'}); toast(j.status === 'live' ? 'Cerrando la grabación…' : 'Cancelado'); refresh(); }})
+             : el('button', {class: 'btn small danger', text: '🗑 Borrar', onclick: async () => { if (!confirm('¿Borrar este trabajo y todos sus clips?')) return; await api(`/api/jobs/${j.id}`, {method: 'DELETE'}); refresh(); }}))));
+  if (active && j.status !== 'live') c.head.append(el('div', {class: 'bar'}, el('i', {style: `width:${Math.round(j.progress * 100)}%`})));
+}
+function drawTimeline(c, j, full) {
+  c.timeline.textContent = ''; c.extra.textContent = '';
+  const dur = j.duration;
+  if (full && dur > 0 && j.mode !== 'live' && (full.hits.length || j.clips.length)) {
+    const tl = el('div', {class: 'timeline', title: 'Línea de tiempo: marcas = sonidos detectados, franjas = clips'});
+    j.clips.forEach(k => tl.append(el('i', {class: 'clipspan', style: `left:${k.start / dur * 100}%;width:${Math.max(.4, (k.end - k.start) / dur * 100)}%`, title: `${k.emoji} ${k.title}`})));
+    full.hits.forEach(h => tl.append(el('i', {class: 'hit ' + h.kind, style: `left:${h.t / dur * 100}%`, title: `${clock(h.t)} · ${(KINDS[h.kind] || {}).label || h.kind}${h.text ? ' «' + h.text + '»' : ''}`})));
+    c.timeline.append(tl);
+  }
+  if (j.mode !== 'live' && !ACTIVE.has(j.status) && j.status !== 'error' && dur > 0) {
+    const a = el('input', {placeholder: '1:23', 'aria-label': 'Inicio'}), b = el('input', {placeholder: '1:50', 'aria-label': 'Fin'}), t = el('input', {placeholder: 'Título (opcional)'});
+    const btn = el('button', {class: 'btn small', text: '＋ Clip manual', onclick: async () => {
+      const s = parseClock(a.value), e = parseClock(b.value);
+      if (isNaN(s) || isNaN(e) || e <= s) return toast('Escribe inicio y fin, por ejemplo 1:23 y 1:50');
+      btn.disabled = true; btn.textContent = 'Creando…';
+      try { await api(`/api/jobs/${j.id}/clips`, {method: 'POST', json: {start: s, end: e, title: t.value}}); a.value = b.value = t.value = ''; } catch (err) { toast(err.message); }
+      btn.disabled = false; btn.textContent = '＋ Clip manual'; refresh();
+    }});
+    c.extra.append(el('div', {class: 'manual'}, el('div', {class: 'field'}, el('label', {text: 'Desde'}), a), el('div', {class: 'field'}, el('label', {text: 'Hasta'}), b), el('div', {class: 'field wide'}, el('label', {text: 'Título'}), t), btn));
+  }
+  if (full && openLogs.has(j.id)) c.extra.append(el('pre', {class: 'log', text: full.log.join('\n') || 'Sin registro'}));
+}
+function drawClips(c, j) {
+  c.clips.textContent = '';
+  if (!j.clips.length) return;
+  const wide = j.settings.layout === 'original';
+  c.clips.append(el('div', {class: 'clips'}, j.clips.map(k => {
+    const v = k.v ? '?v=' + k.v : '';
+    const em = el('input', {class: 'em', value: k.emoji, 'aria-label': 'Emoji', maxlength: 8}), ti = el('input', {class: 'ti', value: k.title, 'aria-label': 'Título', maxlength: 120});
+    const save = el('button', {class: 'btn small', text: 'Aplicar título', onclick: async () => {
+      save.disabled = true; save.textContent = 'Renderizando…';
+      try { await api(`/api/jobs/${j.id}/clips/${k.id}`, {method: 'PATCH', json: {title: ti.value, emoji: em.value}}); toast('Título actualizado'); } catch (e) { toast(e.message); }
+      refresh();
+    }});
+    return el('div', {class: 'clip' + (wide ? ' wide' : '')},
+      el('video', {src: `/media/${j.id}/${k.file}${v}`, poster: `/media/${j.id}/${k.thumb}${v}`, controls: '', preload: 'none', playsinline: ''}),
+      el('div', {class: 'clip-body'},
+        el('div', {class: 'clip-title'}, em, ti),
+        el('div', {class: 'clip-meta', text: `${clock(k.start)} – ${clock(k.end)} · ${k.kinds.map(x => (KINDS[x] || {}).emoji || '').join(' ')} ${k.kinds.map(x => (KINDS[x] || {}).label || x).join(', ')}`, title: k.text || ''}),
+        el('div', {class: 'clip-actions'},
+          el('a', {class: 'btn small', href: `/media/${j.id}/${k.file}?download=1`, text: '⬇ Descargar'}), save,
+          el('button', {class: 'btn small danger', text: '🗑', title: 'Borrar clip', onclick: async () => { await api(`/api/jobs/${j.id}/clips/${k.id}`, {method: 'DELETE'}); refresh(); }}))));
+  })));
+}
+
+async function refresh() {
+  let jobs;
+  try { jobs = await api('/api/jobs'); } catch { return; }
+  const box = $('#jobs');
+  if (!jobs.length) { cards.clear(); box.textContent = ''; box.append(el('div', {class: 'empty', text: 'Aún no hay trabajos. Pega un enlace arriba para empezar.'})); return; }
+  box.querySelector('.empty')?.remove();
+  for (const [id, c] of cards) if (!jobs.some(j => j.id === id)) { c.root.remove(); cards.delete(id); }
+  let prev = null;
+  for (const j of jobs) {
+    let c = cards.get(j.id);
+    if (!c) { c = jobCard(j); cards.set(j.id, c); prev ? prev.after(c.root) : box.prepend(c.root); }
+    prev = c.root;
+    const sigHead = [j.status, j.message, j.progress, j.title, j.clips.length].join('|');
+    if (sigHead !== c.sigHead) { c.sigHead = sigHead; drawHead(c, j); }
+    const sigClips = JSON.stringify(j.clips.map(k => [k.id, k.title, k.emoji, k.v])) + j.settings.layout;
+    const editing = c.clips.contains(document.activeElement) || [...c.clips.querySelectorAll('video')].some(v => !v.paused);
+    if (sigClips !== c.sigClips && !editing) { c.sigClips = sigClips; drawClips(c, j); }
+    const sigHits = [j.status, j.clips.length, Math.round(j.progress * 20), openLogs.has(j.id), ACTIVE.has(j.status) && openLogs.has(j.id) ? j.message : ''].join('|');
+    if (sigHits !== c.sigHits && !c.extra.contains(document.activeElement)) {
+      c.sigHits = sigHits;
+      let full = null; try { full = await api('/api/jobs/' + j.id); } catch {}
+      drawTimeline(c, j, full);
+    }
+  }
+}
+async function poll() { await refresh(); setTimeout(poll, 1500); }
+init().catch(e => toast('No se pudo conectar con el servidor: ' + e.message));
+setInterval(async () => { try { pills(await api('/api/status')); } catch {} }, 15000);
+</script>
+</body>
+</html>
