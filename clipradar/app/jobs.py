@@ -200,7 +200,7 @@ class Job:
     def _ydl_opts(self) -> dict:
         return {
             "quiet": True, "no_warnings": True, "noplaylist": True,
-            "ffmpeg_location": str(Path(ff.ffmpeg_bin()).parent),
+            "ffmpeg_location": ff.ffmpeg_bin(),
             "js_runtimes": _js_runtimes() or {"deno": {}},
         }
 
@@ -397,20 +397,33 @@ class Job:
             "-segment_list_type", "csv", "-segment_list_flags", "+live", str(seg_dir / "seg_%06d.ts"),
         ]
         base = [ff.ffmpeg_bin(), "-hide_banner", "-nostdin", "-loglevel", "error", "-y"]
+        errlog = open(self.dir / "capture.log", "ab")  # para diagnosticar fallos de captura
         if self.local_file:  # simulación de directo con un archivo (pruebas)
-            p = subprocess.Popen(base + ["-re", "-i", self.local_file] + seg_args, stderr=subprocess.DEVNULL)
+            p = subprocess.Popen(base + ["-re", "-i", self.local_file] + seg_args, stderr=errlog)
+            errlog.close()
             self._procs = [p]
             return
         q = self.settings["quality"]
-        ytdlp = [sys.executable, "-m", "yt_dlp", "-q", "--no-warnings", "--no-playlist",
-                 "-f", f"b[height<={q}]/b", "--ffmpeg-location", str(Path(ff.ffmpeg_bin()).parent)]
+        ytdlp = [sys.executable, "-m", "yt_dlp", "--no-progress", "--no-playlist",
+                 "-f", f"b[height<={q}]/b", "--ffmpeg-location", ff.ffmpeg_bin()]
         for rt in _js_runtimes():
             ytdlp += ["--js-runtimes", rt]
         ytdlp += ["-o", "-", self.url]
-        dl = subprocess.Popen(ytdlp, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-        p = subprocess.Popen(base + ["-i", "pipe:0"] + seg_args, stdin=dl.stdout, stderr=subprocess.DEVNULL)
+        dl = subprocess.Popen(ytdlp, stdout=subprocess.PIPE, stderr=errlog)
+        p = subprocess.Popen(base + ["-i", "pipe:0"] + seg_args, stdin=dl.stdout, stderr=errlog)
         dl.stdout.close()
+        errlog.close()
         self._procs = [dl, p]
+
+    def _capture_tail(self) -> str:
+        """Últimas líneas útiles del registro de yt-dlp/ffmpeg."""
+        try:
+            text = (self.dir / "capture.log").read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            return ""
+        lines = [ln.strip() for ln in text.splitlines() if ln.strip() and not ln.startswith("[download]")]
+        errs = [ln for ln in lines if "ERROR" in ln or "error" in ln.lower()] or lines
+        return (" · Detalle: " + " | ".join(errs[-3:])[:600]) if errs else ""
 
     def _run_live(self) -> None:
         s = self.settings
@@ -502,7 +515,8 @@ class Job:
             if not alive and not fresh:
                 if self.local_file or restarts >= 5 or clock == 0 and restarts >= 1:
                     if clock == 0:
-                        raise RuntimeError("No se pudo capturar el directo (¿terminó o el enlace no es válido?)")
+                        raise RuntimeError("No se pudo capturar el directo (¿terminó o el enlace no es válido?)"
+                                           + self._capture_tail())
                     break
                 restarts += 1
                 self.say(f"Reconectando al directo (intento {restarts})…")
