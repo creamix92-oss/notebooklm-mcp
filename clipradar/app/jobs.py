@@ -390,7 +390,7 @@ class Job:
         self.save()
 
     # ------------------------------------------------------------- EN VIVO
-    def _start_capture(self, seg_dir: Path, first_index: int) -> None:
+    def _start_capture(self, seg_dir: Path, first_index: int, attempt: int = 0) -> None:
         seg_args = [
             "-c", "copy", "-f", "segment", "-segment_time", str(SEG_SECONDS), "-reset_timestamps", "1",
             "-segment_start_number", str(first_index), "-segment_list", str(seg_dir / f"list_{first_index}.csv"),
@@ -404,6 +404,21 @@ class Job:
             self._procs = [p]
             return
         q = self.settings["quality"]
+        if attempt % 2 == 0:  # método principal: ffmpeg lee la señal directamente
+            try:
+                url, headers = self._live_input()
+                hdr = "".join(f"{k}: {v}\r\n" for k, v in headers.items())
+                cmd = base + (["-headers", hdr] if hdr else []) + ["-i", url] + seg_args
+                errlog.write(b"\n--- captura directa ---\n")
+                errlog.flush()
+                p = subprocess.Popen(cmd, stderr=errlog)
+                errlog.close()
+                self._procs = [p]
+                return
+            except Exception as exc:
+                errlog.write(f"ERROR: captura directa: {exc}\n".encode("utf-8", "replace"))
+        errlog.write(b"\n--- captura via yt-dlp ---\n")
+        errlog.flush()
         ytdlp = [sys.executable, "-m", "yt_dlp", "--no-progress", "--no-playlist",
                  "-f", f"b[height<={q}]/b", "--ffmpeg-location", ff.ffmpeg_bin()]
         for rt in _js_runtimes():
@@ -415,6 +430,18 @@ class Job:
         errlog.close()
         self._procs = [dl, p]
 
+    def _live_input(self) -> tuple[str, dict]:
+        """URL directa de la señal en vivo (y cabeceras HTTP) resuelta con yt-dlp."""
+        import yt_dlp
+
+        q = self.settings["quality"]
+        with yt_dlp.YoutubeDL(self._ydl_opts() | {"format": f"b[height<={q}]/b"}) as ydl:
+            info = ydl.extract_info(self.url, download=False)
+        url = info.get("url")
+        if not url:
+            raise RuntimeError("yt-dlp no devolvió una URL de video para este directo")
+        return url, dict(info.get("http_headers") or {})
+
     def _capture_tail(self) -> str:
         """Últimas líneas útiles del registro de yt-dlp/ffmpeg."""
         try:
@@ -422,8 +449,10 @@ class Job:
         except OSError:
             return ""
         lines = [ln.strip() for ln in text.splitlines() if ln.strip() and not ln.startswith("[download]")]
-        errs = [ln for ln in lines if "ERROR" in ln or "error" in ln.lower()] or lines
-        return (" · Detalle: " + " | ".join(errs[-3:])[:600]) if errs else ""
+        main = [ln for ln in lines if ln.startswith("ERROR")]  # mensajes de yt-dlp: los más claros
+        other = [ln for ln in lines if "error" in ln.lower() and not ln.startswith("ERROR")] or lines
+        picked = main[-2:] + other[-2:]
+        return (" · Detalle: " + " | ".join(picked)[:700]) if picked else ""
 
     def _run_live(self) -> None:
         s = self.settings
@@ -513,7 +542,7 @@ class Job:
             if stopping:
                 break
             if not alive and not fresh:
-                if self.local_file or restarts >= 5 or clock == 0 and restarts >= 1:
+                if self.local_file or restarts >= 5 or clock == 0 and restarts >= 2:
                     if clock == 0:
                         raise RuntimeError("No se pudo capturar el directo (¿terminó o el enlace no es válido?)"
                                            + self._capture_tail())
@@ -521,7 +550,7 @@ class Job:
                 restarts += 1
                 self.say(f"Reconectando al directo (intento {restarts})…")
                 time.sleep(5)
-                self._start_capture(seg_dir, len(seen) + 1000 * restarts)
+                self._start_capture(seg_dir, len(seen) + 1000 * restarts, restarts)
             time.sleep(1.0)
         shutil.rmtree(seg_dir, ignore_errors=True)
 
